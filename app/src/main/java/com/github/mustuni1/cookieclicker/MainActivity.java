@@ -1,6 +1,9 @@
 package com.github.mustuni1.cookieclicker;
 
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -16,8 +19,55 @@ import com.github.mustuni1.cookieclicker.Book;
 import com.github.mustuni1.cookieclicker.MySQLiteHelper;
 import android.os.Bundle;
 import android.app.Activity;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 
 public class MainActivity extends ActionBarActivity {
+
+    TextView condition, totalmin, totalcoins,reward;
+    EditText inpminutes;
+    Button start, rules, shop;
+    AlertDialog alertDialog;
+
+    public void addListenerOnButton() {
+        final Context context = this;
+        start.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View arg0) {
+
+                // The code to start the service timer you guys are doing it
+
+            }
+
+        });
+
+        rules.setOnClickListener(new View.OnClickListener() {
+
+
+            @Override
+            public void onClick(View arg0) {
+                // The code that does log and shows rules which we will make
+
+                alertDialog.show();
+            }
+
+        });
+        shop.setOnClickListener(new View.OnClickListener() {
+
+
+            @Override
+            public void onClick(View arg0) {
+                // The code that switches to shop activity
+                Intent intent = new Intent(context, ShopActivity.class);
+                startActivity(intent);
+
+            }
+
+        });
+    }
 
     final String PREFS_NAME = "MyPrefsFile";
 
@@ -46,6 +96,26 @@ public class MainActivity extends ActionBarActivity {
         filter.addAction(Intent.ACTION_SCREEN_OFF);
         mReceiver = new ScreenReceiver();
         registerReceiver(mReceiver, filter);
+
+        setContentView(R.layout.activity_main);
+        condition = (TextView) findViewById(R.id.condition);
+        totalmin =  (TextView) findViewById(R.id.lblTotalMinutes);
+        totalcoins = (TextView) findViewById(R.id.lblTotalCoins);
+        reward = (TextView) findViewById(R.id.lblReward);
+        inpminutes = (EditText) findViewById(R.id.txtMinutes);
+        start = (Button) findViewById(R.id.btnStart);
+        rules = (Button) findViewById(R.id.btnRules);
+        shop = (Button) findViewById(R.id.btnShop);
+        //check if timer is over :)
+        addListenerOnButton();
+        alertDialog = new AlertDialog.Builder(this).create();
+        alertDialog.setTitle("Help");
+        alertDialog.setMessage(" You got this game to stop wasting your life on an electric brick in a fun way. Well, the magic in this game is it gives you an incentive for not using your phone in money $$$. 100 hack coins is used to spin the Collector, and you get items. Try collecting all these! Every minute you get 3 coins and every 60 minutes you get 50 extra coins.");
+        alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+// here you can add functions
+            }
+        });
 
     }
 
