@@ -25,6 +25,7 @@ import android.app.Activity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class MainActivity extends ActionBarActivity {
@@ -35,6 +36,7 @@ public class MainActivity extends ActionBarActivity {
     EditText inpminutes;
     Button start, rules, shop;
     AlertDialog alertDialog;
+    AlertDialog alertDialogNoMoney;
 
     public void addListenerOnButton() {
         final Context context = this;
@@ -56,6 +58,11 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onClick(View arg0) {
                 // The code that switches to shop activity
+                if(settings.getInt("score", 0) < 10) {
+                    alertDialogNoMoney.show();
+                    return;
+                }
+                settings.edit().putInt("score", settings.getInt("score", 0)-10).apply();
                 Intent intent = new Intent(context, ShopActivity.class);
                 startActivity(intent);
 
@@ -80,17 +87,15 @@ public class MainActivity extends ActionBarActivity {
         if (settings.getBoolean("first_time", true)) {
 
             Log.d("Comments", "INITIAL APP LOAD");
-            settings.edit().putBoolean("first_time", false).commit();
+            settings.edit().putBoolean("first_time", false).apply();
 
-            settings.edit().putLong("time", Calendar.getInstance().getTimeInMillis()).commit();
-            settings.edit().putInt("score", 0).commit();
-            settings.edit().putBoolean("on", true).commit();
-            settings.edit().putInt("timeSaved", 0).commit();
+            settings.edit().putLong("time", Calendar.getInstance().getTimeInMillis()).apply();
+            settings.edit().putInt("score", 100).apply();
+            settings.edit().putBoolean("on", true).apply();
+            settings.edit().putInt("timeSaved", 0).apply();
             Set<String> stringSet = new HashSet<String>();
             stringSet.add("1");
             stringSet.add("25");
-            stringSet.add("17");
-            stringSet.add("43");
             settings.edit().putStringSet("items", stringSet);
 
         }
@@ -114,6 +119,25 @@ public class MainActivity extends ActionBarActivity {
 // here you can add functions
             }
         });
+
+        alertDialogNoMoney = new AlertDialog.Builder(this).create();
+        alertDialogNoMoney.setTitle("Not Enough Money!");
+        alertDialogNoMoney.setMessage("Earn more money to access the shop. It costs 10 coins to enter.");
+        alertDialogNoMoney.setButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+// here you can add functions
+            }
+        });
+
+        for (int i = 0; i < settings.getStringSet("items", null).size(); i++) {
+
+            ImageView myImgView = (ImageView) findViewById(R.id.imageView);
+            String uri = "@drawable/img_" + i;
+
+            int imageResource = getResources().getIdentifier(uri, null, getPackageName());
+            myImgView.setImageResource(imageResource);
+        }
+
 
     }
 

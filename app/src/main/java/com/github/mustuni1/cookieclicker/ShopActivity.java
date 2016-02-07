@@ -4,7 +4,9 @@ package com.github.mustuni1.cookieclicker;
  * Created by test on 2/7/16.
  */
 
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -25,17 +27,21 @@ public class ShopActivity extends ActionBarActivity{
      * Created by nithin on 2/6/16.
      */
     private Button clickButton;
+
     private Timer timer;
     private TimerTask timerTask = new TimerTask() {
 
         @Override
         public void run () {
-            if(this == null)
+            if(this == null || timer == null){
+                Log.e("isNull", "true");
                 return;
+            }
+            Log.e("executed", "true");
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                // get random image and change existing image's link
+                    // get random image and change existing image's link
                     final Random random = new Random();
                     int num = random.nextInt(45);
                     Log.e("generated num", num + "");
@@ -74,7 +80,6 @@ public class ShopActivity extends ActionBarActivity{
     protected void onPause() {
         if (ScreenReceiver.wasScreenOn) {}
         super.onPause();
-        stop();
     }
 
     @Override
@@ -87,5 +92,13 @@ public class ShopActivity extends ActionBarActivity{
         if(v.getId() == R.id.button){
             stop();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        // stop Handler
+//        aHandler.removeCallbacks(r);
+        // to stop anonymous runnable use aHandler.removeCallbacksAndMessages(null);
+        super.onDestroy();
     }
 }
