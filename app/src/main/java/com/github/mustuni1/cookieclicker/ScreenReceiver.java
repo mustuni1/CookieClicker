@@ -34,6 +34,8 @@ public class ScreenReceiver extends BroadcastReceiver {
             int newScore = settings.getInt("score", 0) + intDiff / 1200;
             settings.edit().putInt("score", newScore).commit();
 
+            settings.edit().putInt("timeSaved", settings.getInt("timeSaved", 0) + intDiff / 6000).commit();
+
             Log.e("time", currentTime + " : " + settings.getLong("time", 123));
             Log.e("intdiff", intDiff + "");
             Log.e("New score", newScore + "");

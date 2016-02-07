@@ -14,7 +14,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
 import com.github.mustuni1.cookieclicker.Book;
 import com.github.mustuni1.cookieclicker.MySQLiteHelper;
 import android.os.Bundle;
@@ -26,6 +29,8 @@ import android.widget.TextView;
 
 public class MainActivity extends ActionBarActivity {
 
+    SharedPreferences settings;
+
     TextView condition, totalmin, totalcoins,reward;
     EditText inpminutes;
     Button start, rules, shop;
@@ -33,16 +38,6 @@ public class MainActivity extends ActionBarActivity {
 
     public void addListenerOnButton() {
         final Context context = this;
-        start.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View arg0) {
-
-                // The code to start the service timer you guys are doing it
-
-            }
-
-        });
 
         rules.setOnClickListener(new View.OnClickListener() {
 
@@ -80,7 +75,7 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        SharedPreferences settings = getApplicationContext().getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        settings = getApplicationContext().getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
 
         if (settings.getBoolean("first_time", true)) {
 
@@ -90,6 +85,13 @@ public class MainActivity extends ActionBarActivity {
             settings.edit().putLong("time", Calendar.getInstance().getTimeInMillis()).commit();
             settings.edit().putInt("score", 0).commit();
             settings.edit().putBoolean("on", true).commit();
+            settings.edit().putInt("timeSaved", 0).commit();
+            Set<String> stringSet = new HashSet<String>();
+            stringSet.add("1");
+            stringSet.add("25");
+            stringSet.add("17");
+            stringSet.add("43");
+            settings.edit().putStringSet("items", stringSet);
 
         }
 
@@ -98,12 +100,8 @@ public class MainActivity extends ActionBarActivity {
         registerReceiver(mReceiver, filter);
 
         setContentView(R.layout.activity_main);
-        condition = (TextView) findViewById(R.id.condition);
         totalmin =  (TextView) findViewById(R.id.lblTotalMinutes);
         totalcoins = (TextView) findViewById(R.id.lblTotalCoins);
-        reward = (TextView) findViewById(R.id.lblReward);
-        inpminutes = (EditText) findViewById(R.id.txtMinutes);
-        start = (Button) findViewById(R.id.btnStart);
         rules = (Button) findViewById(R.id.btnRules);
         shop = (Button) findViewById(R.id.btnShop);
         //check if timer is over :)
@@ -128,6 +126,12 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        final TextView textViewToChange = (TextView) findViewById(R.id.lblTotalCoins);
+        textViewToChange.setText(settings.getInt("score", 0) + "");
+
+        final TextView updateSavedMinutes = (TextView) findViewById(R.id.lblTotalMinutes);
+        updateSavedMinutes.setText(settings.getInt("timeSaved", 0)+"");
+
         if (!ScreenReceiver.wasScreenOn) {}
     }
 
